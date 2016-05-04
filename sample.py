@@ -44,11 +44,10 @@ class AsynchronousFileReader(threading.Thread):
         '''Check whether there is no more content to expect.'''
         return not self.is_alive() and self._queue.empty()
 
-def main():
-    optparser = OptionParser()
-    optparser.add_option("--file", dest="querFile", default=None, help="Query File")
-    (options, args) = optparser.parse_args()
-    shCmd = "/usr/bin/hive -f " + options.querFile + ";"
+
+
+def runQuery(queryFile):
+    shCmd = "/usr/bin/hive -f " + queryFile + ";"
     process = subprocess.Popen(shCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, executable="/bin/bash")
     poll_thread = AsyncProcessPoll(process)
     poll_thread.daemon=True
@@ -65,7 +64,7 @@ def main():
     stdout_reader.daemon=True
     stdout_reader.start()
 
-    stderr_file = open(options.querFile + "_stderr" , "w")
+    stderr_file = open(queryFile + "_stderr" , "w")
 
     while not stderr_reader.eof():
         # Show what we received from standard error.
@@ -96,4 +95,12 @@ def main():
     print poll_thread.get_return_code()
     return poll_thread.get_return_code()
 
+def main():
+    optparser = OptionParser()
+    optparser.add_option("--file", dest="querFile", default=None, help="Query File")
+    (options, args) = optparser.parse_args()
+    if options.querFile is not None:
+        runQuery(options.querFile)
+
 main()
+       
