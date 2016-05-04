@@ -98,9 +98,15 @@ def runQuery(queryFile):
 def main():
     optparser = OptionParser()
     optparser.add_option("--file", dest="querFile", default=None, help="Query File")
+    optparser.add_option("--pd", dest="pd", default=None, help="parent directory")
     (options, args) = optparser.parse_args()
     if options.querFile is not None:
         runQuery(options.querFile)
+    else:
+        fileNames = ["q19.sql", "q27.sql", "q3.sql", "q34.sql","q42.sql","q43.sql","q46.sql","q52.sql","q53.sql","q55.sql","q59.sql","q63.sql","q68.sql","q7.sql","q73.sql","q79.sql","q89.sql","q98.sql","ss_max.sql"]
+        for filename in fileNames:
+            print "Running query " + filename + "...."
+            runQuery(options.pd + filename)
+
 
 main()
-       
