@@ -60,6 +60,11 @@ def main():
     stderr_reader.daemon=True
     stderr_reader.start()
 
+    stdout_queue = Queue.Queue()
+    stdout_reader = AsynchronousFileReader(process.stdout, stdout_queue)
+    stdout_reader.daemon=True
+    stdout_reader.start()
+
     while not stderr_reader.eof():
         # Show what we received from standard error.
         while not stderr_queue.empty():
@@ -68,8 +73,17 @@ def main():
         # Sleep a bit before asking the readers again.
         time.sleep(.1)
 
+    while not stdout_reader.eof():
+        # Show what we received from standard error.
+        while not stdout_queue.empty():
+            line = stdout_queue.get()
+            print "stdout: " + line
+        # Sleep a bit before asking the readers again.
+        time.sleep(.1)
+
 
     stderr_reader.join()
+    stdout_reader.join()
     # Close subprocess' file descriptors.
     process.stdout.close()
     process.stderr.close()
