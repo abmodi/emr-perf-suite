@@ -65,9 +65,11 @@ def main():
         while not stderr_queue.empty():
             line = stderr_queue.get()
             print "stderr: " + line
+        # Sleep a bit before asking the readers again.
+        time.sleep(.1)
 
 
-    stderr_queue.join()
+    stderr_reader.join()
     # Close subprocess' file descriptors.
     process.stdout.close()
     process.stderr.close()
