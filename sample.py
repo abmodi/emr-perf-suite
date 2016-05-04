@@ -49,7 +49,7 @@ def main():
     optparser.add_option("--file", dest="querFile", default=None, help="Query File")
     (options, args) = optparser.parse_args()
     shCmd = "/usr/bin/hive -f " + options.querFile + ";"
-    process = subprocess.Popen(shcmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process = subprocess.Popen(shCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     poll_thread = AsyncProcessPoll(process)
     poll_thread.daemon=True
     poll_thread.start()
