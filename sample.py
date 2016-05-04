@@ -65,13 +65,18 @@ def main():
     stdout_reader.daemon=True
     stdout_reader.start()
 
+    stderr_file = open(options.querFile + "_stderr" , "w")
+
     while not stderr_reader.eof():
         # Show what we received from standard error.
         while not stderr_queue.empty():
             line = stderr_queue.get()
+            stderr_file.write(line)
             print "stderr: " + line
         # Sleep a bit before asking the readers again.
         time.sleep(.1)
+
+    stderr_file.close()
 
     while not stdout_reader.eof():
         # Show what we received from standard error.
