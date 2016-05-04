@@ -7,18 +7,18 @@ import time
 from optparse import OptionParser
 
 class AsyncProcessPoll(threading.Thread):
-	def __init__(self, process):
-		self.process = process
-    	threading.Thread.__init__(self)
-    	self._retcode = None
+    def __init__(self, process):
+        self.process = process
+        threading.Thread.__init__(self)
+        self._retcode = None
 
-  	def run(self):
-    	while self.process.poll() is None:
-        	time.sleep(1)
-    		self._retcode = self.process.returncode
+    def run(self):
+        while self.process.poll() is None:
+            time.sleep(1)
+            self._retcode = self.process.returncode
 
-  	def get_return_code(self):
-    	return self._retcode
+    def get_return_code(self):
+        return self._retcode
 
 
 class AsynchronousFileReader(threading.Thread):
@@ -45,12 +45,12 @@ class AsynchronousFileReader(threading.Thread):
         return not self.is_alive() and self._queue.empty()
 
 def main():
-	optparser = OptionParser()
-	optparser.add_option("--file", dest="querFile", default=None, help="Query File")
-	(options, args) = optparser.parse_args()
-	shCmd = "/usr/bin/hive -f " + options.querFile + ";"
-	process = subprocess.Popen(shcmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-	poll_thread = AsyncProcessPoll(process)
+    optparser = OptionParser()
+    optparser.add_option("--file", dest="querFile", default=None, help="Query File")
+    (options, args) = optparser.parse_args()
+    shCmd = "/usr/bin/hive -f " + options.querFile + ";"
+    process = subprocess.Popen(shcmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    poll_thread = AsyncProcessPoll(process)
     poll_thread.daemon=True
     poll_thread.start()
     # Launch the asynchronous readers of the process' stdout and stderr.
